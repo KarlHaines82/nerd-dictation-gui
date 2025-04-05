@@ -1,5 +1,7 @@
 # Nerd Dictation GUI
 
+[Now available from pip and pypi.org!](https://pypi.org/project/nerd-dictation-gui/)
+
 A simple graphical user interface for [nerd-dictation](https://github.com/ideasman42/nerd-dictation), a speech-to-text tool for Linux.
 
 ## Features
