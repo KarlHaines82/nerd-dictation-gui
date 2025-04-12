@@ -10,7 +10,8 @@ from PyQt6.QtWidgets import (
     QMessageBox, QSystemTrayIcon, QMenu
 )
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtCore import QCoreApplication, Qt, QTimer, QEvent
+from PyQt6.QtCore import QCoreApplication, QTimer, QEvent
+
 
 class NerdDictationGUI(QWidget):
     def __init__(self):
@@ -52,18 +53,19 @@ class NerdDictationGUI(QWidget):
     def closeEvent(self, event):
         event.ignore()
         self.hide()
-        self.tray_icon.showMessage("Nerd Dictation", "Application minimized to tray.", QSystemTrayIcon.MessageIcon.Information, 2000)
+        self.tray_icon.showMessage(
+            "Nerd Dictation", "Application minimized to tray.", QSystemTrayIcon.MessageIcon.Information, 2000)
 
     def init_tray(self):
         self.tray_icon = QSystemTrayIcon(self)
-        
+
         # Use resource paths for icons
         idle_icon_path = self.get_resource_path('mic_idle.png')
         active_icon_path = self.get_resource_path('mic_recording.png')
-        
+
         self.icon_idle = QIcon(idle_icon_path)
         self.icon_active = QIcon(active_icon_path)
-        
+
         self.tray_icon.setIcon(self.icon_idle)
         self.tray_icon.setToolTip("Nerd Dictation")
 
@@ -88,7 +90,8 @@ class NerdDictationGUI(QWidget):
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.activated.connect(self.tray_activated)
         self.tray_icon.show()
-        self.tray_icon.showMessage("Nerd Dictation", "Started minimized in system tray.", QSystemTrayIcon.MessageIcon.Information, 3000)
+        self.tray_icon.showMessage(
+            "Nerd Dictation", "Started minimized in system tray.", QSystemTrayIcon.MessageIcon.Information, 3000)
 
     def quit_application(self):
         """Clean up and exit application"""
@@ -107,34 +110,38 @@ class NerdDictationGUI(QWidget):
             self.status_label.setText("Status: Starting...")
             threading.Thread(target=self._start_process, daemon=True).start()
         else:
-            QMessageBox.information(self, "Info", "Dictation is already running.")
+            QMessageBox.information(
+                self, "Info", "Dictation is already running.")
 
     def _start_process(self):
         try:
             # Check if nerd-dictation is available
             try:
-                subprocess.run(["nerd-dictation", "--version"], check=True, 
+                subprocess.run(["nerd-dictation", "--version"], check=True,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except (subprocess.SubprocessError, FileNotFoundError):
-                raise Exception("nerd-dictation command not found. Please ensure it's installed and in your PATH.")
-            
-            self.process = subprocess.Popen(["nerd-dictation", "begin"], 
-                                           stdout=subprocess.PIPE, 
-                                           stderr=subprocess.PIPE)
-            
+                raise Exception(
+                    "nerd-dictation command not found. Please ensure it's installed and in your PATH.")
+
+            self.process = subprocess.Popen(
+                ["nerd-dictation", "begin"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
             # Update UI from the main thread
-            QTimer.singleShot(0, lambda: self.status_label.setText("Status: Running"))
-            QTimer.singleShot(0, lambda: self.tray_icon.setIcon(self.icon_active))
+            QTimer.singleShot(
+                0, lambda: self.status_label.setText("Status: Running"))
+            QTimer.singleShot(
+                0, lambda: self.tray_icon.setIcon(self.icon_active))
             QTimer.singleShot(0, lambda: self.tray_icon.showMessage(
-                "Nerd Dictation", "Dictation started.", 
+                "Nerd Dictation", "Dictation started.",
                 QSystemTrayIcon.MessageIcon.Information, 2000))
-            
+
         except Exception as e:
-            QTimer.singleShot(0, lambda: self.status_label.setText("Status: Error"))
-            QTimer.singleShot(0, lambda: QMessageBox.critical(self, "Error", str(e)))
+            QTimer.singleShot(
+                0, lambda: self.status_label.setText("Status: Error"))
+            QTimer.singleShot(
+                0, lambda: QMessageBox.critical(self, "Error", str(e)))
             QTimer.singleShot(0, lambda: self.tray_icon.showMessage(
-                "Nerd Dictation", f"Error: {str(e)}", 
-                QSystemTrayIcon.MessageIcon.Critical, 2000))
+                "Nerd Dictation", f"Error: {str(e)}", QSystemTrayIcon.MessageIcon.Critical, 2000))
             self.process = None
 
     def stop_dictation(self):
@@ -143,14 +150,14 @@ class NerdDictationGUI(QWidget):
                 subprocess.run(["nerd-dictation", "end"], check=True)
                 self.status_label.setText("Status: Stopped")
                 self.tray_icon.setIcon(self.icon_idle)
-                self.tray_icon.showMessage("Nerd Dictation", "Dictation stopped.", 
-                                          QSystemTrayIcon.MessageIcon.Information, 2000)
+                self.tray_icon.showMessage("Nerd Dictation", "Dictation stopped.",
+                                           QSystemTrayIcon.MessageIcon.Information, 2000)
                 self.process = None
             except subprocess.CalledProcessError as e:
                 self.status_label.setText("Status: Error")
                 QMessageBox.critical(self, "Error", str(e))
-                self.tray_icon.showMessage("Nerd Dictation", f"Error: {str(e)}", 
-                                          QSystemTrayIcon.MessageIcon.Critical, 2000)
+                self.tray_icon.showMessage("Nerd Dictation", f"Error: {str(e)}",
+                                           QSystemTrayIcon.MessageIcon.Critical, 2000)
         else:
             QMessageBox.information(self, "Info", "No dictation is running.")
 

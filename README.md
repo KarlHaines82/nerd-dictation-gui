@@ -4,6 +4,8 @@
 
 A simple graphical user interface for [nerd-dictation](https://github.com/ideasman42/nerd-dictation), a speech-to-text tool for Linux.
 
+It took a very short time to discover `nerd-dictation' after beginning my search for "decent voice-to-text for Linux." It provided us with the most very basic interface between vosk's model our wish to convert our speech into text, but what it does not do, is perform this task in a convinient j
+
 ## Features
 
 - System tray integration
