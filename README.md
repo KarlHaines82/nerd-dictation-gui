@@ -28,7 +28,7 @@ pip install nerd-dictation-gui
 ### Install from source
 
 ```bash
-git clone https://github.com/yourusername/nerd-dictation-gui.git
+git clone https://github.com/KarlHaines82/nerd-dictation-gui.git
 cd nerd-dictation-gui
 pip install -e .
 ```
